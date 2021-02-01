@@ -18,9 +18,11 @@ class AddTaskDialog extends StatefulWidget {
 }
 
 class _AddTaskDialogState extends State<AddTaskDialog> {
+  // Properties
   final TextEditingController titleController = TextEditingController();
   final TextEditingController desController = TextEditingController();
 
+  // Life cycle
   @override
   void initState() {
     // TODO: implement initState
@@ -42,24 +44,24 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Center(
-              child: Text(
+              child: const Text(
             "Add new task",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           )),
-          SizedBox(
+          const SizedBox(
             height: 24,
           ),
           CustomTextField(
             labelText: 'Enter title',
             controller: titleController,
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           CustomTextField(
             labelText: 'Enter description',
             controller: desController,
           ),
-          SizedBox(height: 12),
-          SizedBox(
+          const SizedBox(height: 12),
+          const SizedBox(
             height: 24,
           ),
           CustomActionButton(

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
+  // Properties
   final String labelText;
   final TextEditingController controller;
 
+  // Constructor
   CustomTextField({@required this.labelText, this.controller});
 
   @override

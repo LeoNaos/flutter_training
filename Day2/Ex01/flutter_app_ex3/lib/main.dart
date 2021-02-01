@@ -116,18 +116,22 @@ class MyHomePage extends StatelessWidget {
 }
 
 class TodoListView extends StatefulWidget {
+  // Properties
   final ScrollController scrollController;
 
+  // Constructor
   TodoListView({this.scrollController, Key key}) : super(key: key);
 
+  // State
   @override
   _TodoListViewState createState() => _TodoListViewState();
 }
 
 class _TodoListViewState extends State<TodoListView> {
+  // Properties
   ListModel listModel;
-  var isChecked;
 
+  // Life cycle
   @override
   void initState() {
     super.initState();
@@ -145,6 +149,130 @@ class _TodoListViewState extends State<TodoListView> {
     );
   }
 
+  // Widgets
+  Widget _buildRowWidget(int index) {
+    final task = listModel[index];
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: InkWell(
+          onTap: () {
+            print('tap Row');
+            setState(() {
+              task.completed = !task.completed;
+            });
+          },
+          child: Stack(
+            children: <Widget>[
+              Container(
+                height: 150,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(AppConstant.borderRadius),
+                  gradient: LinearGradient(
+                      colors: [task.startColor, task.endColor],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight),
+                  boxShadow: [
+                    BoxShadow(
+                      color: task.endColor,
+                      blurRadius: 12,
+                      offset: Offset(0, 6),
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                right: 0,
+                bottom: 0,
+                top: 0,
+                child: CustomPaint(
+                  size: Size(100, 150),
+                  painter: CustomCardShapePainter(
+                      AppConstant.borderRadius, task.startColor, task.endColor),
+                ),
+              ),
+              Positioned.fill(
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      // child: Image.asset(
+                      //   'assets/icon.png',
+                      //   height: 64,
+                      //   width: 64,
+                      // ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Image.asset(
+                          'assets/ic_task.png',
+                          width: 40,
+                          height: 40,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                      flex: 2,
+                    ),
+                    Expanded(
+                      flex: 4,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            task.title,
+                            style: AppConstant.smallTitleTextWhite,
+                          ),
+                          Text(
+                            task.subTitle,
+                            style: AppConstant.smallSubTextWhite,
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            children: <Widget>[
+                              const Icon(
+                                Icons.access_time_outlined,
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              Flexible(
+                                child: Text(
+                                  task.time,
+                                  style: AppConstant.smallSubTextWhite,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Checkbox(
+                        activeColor: task.endColor,
+                        checkColor: Colors.white,
+                        value: task.completed,
+                        onChanged: (bool) {
+                          print('onChange checkbox: $bool');
+                          setState(() {
+                            task.completed = bool;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Methods
   void doFilterAll() {
     setState(() {
       listModel = ListModel(tasks);
@@ -190,125 +318,5 @@ class _TodoListViewState extends State<TodoListView> {
             ),
           );
         });
-  }
-
-  Widget _buildRowWidget(int index) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: InkWell(
-          onTap: () {
-            print('tap Row');
-            setState(() {
-              listModel[index].completed = !listModel[index].completed;
-            });
-          },
-          child: Stack(
-            children: <Widget>[
-              Container(
-                height: 150,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(AppConstant.borderRadius),
-                  gradient: LinearGradient(colors: [
-                    listModel[index].startColor,
-                    listModel[index].endColor
-                  ], begin: Alignment.topLeft, end: Alignment.bottomRight),
-                  boxShadow: [
-                    BoxShadow(
-                      color: listModel[index].endColor,
-                      blurRadius: 12,
-                      offset: Offset(0, 6),
-                    ),
-                  ],
-                ),
-              ),
-              Positioned(
-                right: 0,
-                bottom: 0,
-                top: 0,
-                child: CustomPaint(
-                  size: Size(100, 150),
-                  painter: CustomCardShapePainter(AppConstant.borderRadius,
-                      listModel[index].startColor, listModel[index].endColor),
-                ),
-              ),
-              Positioned.fill(
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      // child: Image.asset(
-                      //   'assets/icon.png',
-                      //   height: 64,
-                      //   width: 64,
-                      // ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Image.asset(
-                          'assets/ic_task.png',
-                          width: 40,
-                          height: 40,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                      flex: 2,
-                    ),
-                    Expanded(
-                      flex: 4,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            listModel[index].title,
-                            style: AppConstant.smallTitleTextWhite,
-                          ),
-                          Text(
-                            listModel[index].subTitle,
-                            style: AppConstant.smallSubTextWhite,
-                          ),
-                          SizedBox(height: 16),
-                          Row(
-                            children: <Widget>[
-                              Icon(
-                                Icons.access_time_outlined,
-                                color: Colors.white,
-                                size: 16,
-                              ),
-                              SizedBox(
-                                width: 8,
-                              ),
-                              Flexible(
-                                child: Text(
-                                  listModel[index].time,
-                                  style: AppConstant.smallSubTextWhite,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: Checkbox(
-                        activeColor: listModel[index].endColor,
-                        checkColor: Colors.white,
-                        value: listModel[index].completed,
-                        onChanged: (bool) {
-                          print('onChange checkbox: $bool');
-                          setState(() {
-                            listModel[index].completed = bool;
-                          });
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app_ex3/common/app_style.dart';
 
 class CustomActionButton extends StatelessWidget {
+  // Properties
   final VoidCallback onClose;
   final VoidCallback onSave;
 
+  // Constructor
   CustomActionButton({@required this.onClose, @required this.onSave});
 
   @override
@@ -28,12 +30,14 @@ class CustomActionButton extends StatelessWidget {
 }
 
 class CustomButton extends StatelessWidget {
+  // Properties
   final VoidCallback onPressed;
   final String buttonText;
   final Color color;
   final Color textColor;
   final Color borderColor;
 
+  // Constructor
   CustomButton(
       {@required this.onPressed,
       @required this.buttonText,
