@@ -6,6 +6,7 @@ class ListModel {
   final List<Task> items;
 
   void insert(int index, Task item) {
+    print('add newTast: ${item.title}');
     items.insert(index, item);
   }
 

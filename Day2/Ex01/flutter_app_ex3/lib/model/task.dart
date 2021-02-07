@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class Task {
-  final String title;
-  final String subTitle;
+  String title;
+  String subTitle;
   final String time;
   final Color startColor;
   final Color endColor;

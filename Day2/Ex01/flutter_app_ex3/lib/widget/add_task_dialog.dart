@@ -10,8 +10,10 @@ import '../model/list_task.dart';
 
 class AddTaskDialog extends StatefulWidget {
   final Function(Task task) saveClick;
+  final Function(Task task, int index) editClick;
+  final Task task;
 
-  AddTaskDialog({this.saveClick});
+  AddTaskDialog({this.task, this.saveClick, this.editClick});
 
   @override
   _AddTaskDialogState createState() => _AddTaskDialogState();
@@ -27,6 +29,11 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    if (widget.task != null) {
+      titleController.text = widget.task.title;
+      desController.text = widget.task.subTitle;
+    }
   }
 
   @override
@@ -69,18 +76,25 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
               Navigator.of(context).pop();
             },
             onSave: () {
-              var task = Task(
-                  title: titleController.text,
-                  subTitle: desController.text,
-                  startColor:
-                      listRandomColor[Random().nextInt(listRandomColor.length)]
-                          [0],
-                  endColor:
-                      listRandomColor[Random().nextInt(listRandomColor.length)]
-                          [1],
-                  time: '12pm',
-                  completed: false);
-              widget.saveClick(task);
+              Task task;
+              if (widget.task != null) {
+                task = widget.task;
+                int index = tasks.indexOf(widget.task);
+                task.title = titleController.text;
+                task.subTitle = desController.text;
+                widget.editClick(task, index);
+              } else {
+                task = Task(
+                    title: titleController.text,
+                    subTitle: desController.text,
+                    startColor: listRandomColor[
+                        Random().nextInt(listRandomColor.length)][0],
+                    endColor: listRandomColor[
+                        Random().nextInt(listRandomColor.length)][1],
+                    time: '12pm',
+                    completed: false);
+                widget.saveClick(task);
+              }
               Navigator.of(context).pop();
             },
           )

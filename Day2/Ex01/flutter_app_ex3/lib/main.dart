@@ -4,6 +4,7 @@ import 'package:flutter_app_ex3/widget/animated_fab.dart';
 import 'package:flutter_app_ex3/common/app_style.dart';
 import 'package:flutter_app_ex3/common/size_config.dart';
 import 'package:flutter_app_ex3/model/task.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 import 'widget/card_painter.dart';
 import 'model/list_model.dart';
@@ -31,6 +32,7 @@ class MyHomePage extends StatelessWidget {
     SizeConfig().init(context);
     final heightTopHeader = SizeConfig.screenHeight * 15 / 100;
     var key = GlobalKey<_TodoListViewState>();
+    print('Init myhomepage');
 
     return Scaffold(
       backgroundColor: AppColors.mainBackgroundColor,
@@ -73,10 +75,16 @@ class MyHomePage extends StatelessWidget {
                                 topRight: Radius.circular(40),
                                 topLeft: Radius.circular(40)),
                           ),
-                          child: TodoListView(
-                            scrollController: scrollController,
-                            key: key,
+                          child: ClipRRect(
+                            child: TodoListView(
+                              scrollController: scrollController,
+                              key: key,
+                            ),
+                            borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(40),
+                                topLeft: Radius.circular(40)),
                           ),
+                          // padding: const EdgeInsets.only(top: 5),
                         ),
                       ),
                     ],
@@ -136,12 +144,20 @@ class _TodoListViewState extends State<TodoListView> {
   void initState() {
     super.initState();
     listModel = ListModel(tasks);
+    print('init State TodoListViewState');
+  }
+
+  @override
+  void dispose() {
+    print('dispose todolistviewstate');
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       itemBuilder: (context, index) {
+        print('build context todolistviewstate');
         return _buildRowWidget(index);
       },
       controller: widget.scrollController,
@@ -151,7 +167,7 @@ class _TodoListViewState extends State<TodoListView> {
 
   // Widgets
   Widget _buildRowWidget(int index) {
-    final task = listModel[index];
+    var task = listModel[index];
 
     return Center(
       child: Padding(
@@ -163,110 +179,141 @@ class _TodoListViewState extends State<TodoListView> {
               task.completed = !task.completed;
             });
           },
-          child: Stack(
-            children: <Widget>[
-              Container(
-                height: 150,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(AppConstant.borderRadius),
-                  gradient: LinearGradient(
-                      colors: [task.startColor, task.endColor],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight),
-                  boxShadow: [
-                    BoxShadow(
-                      color: task.endColor,
-                      blurRadius: 12,
-                      offset: Offset(0, 6),
+          child: _buildRowSlideableWidget(task),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRowSlideableWidget(Task task) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: Slidable(
+        actionPane: SlidableDrawerActionPane(),
+        key: Key(task.title),
+        actions: [
+          IconSlideAction(
+            color: Colors.green,
+            onTap: () {
+              doAdd(task: task);
+            },
+            caption: 'Edit',
+            icon: Icons.edit,
+          )
+        ],
+        secondaryActions: [
+          IconSlideAction(
+            color: Colors.red,
+            caption: 'Delete',
+            onTap: () {
+              removeTask(task);
+            },
+            icon: Icons.delete,
+          )
+        ],
+        child: Stack(
+          children: <Widget>[
+            Container(
+              height: 150,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(AppConstant.borderRadius),
+                gradient: LinearGradient(
+                    colors: [task.startColor, task.endColor],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight),
+                boxShadow: [
+                  BoxShadow(
+                    color: task.endColor,
+                    blurRadius: 12,
+                    offset: Offset(0, 6),
+                  ),
+                ],
+              ),
+            ),
+            Positioned(
+              right: 0,
+              bottom: 0,
+              top: 0,
+              child: CustomPaint(
+                size: Size(100, 150),
+                painter: CustomCardShapePainter(
+                    AppConstant.borderRadius, task.startColor, task.endColor),
+              ),
+            ),
+            Positioned.fill(
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    // child: Image.asset(
+                    //   'assets/icon.png',
+                    //   height: 64,
+                    //   width: 64,
+                    // ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: Image.asset(
+                        'assets/ic_task.png',
+                        width: 40,
+                        height: 40,
+                        fit: BoxFit.contain,
+                      ),
                     ),
-                  ],
-                ),
-              ),
-              Positioned(
-                right: 0,
-                bottom: 0,
-                top: 0,
-                child: CustomPaint(
-                  size: Size(100, 150),
-                  painter: CustomCardShapePainter(
-                      AppConstant.borderRadius, task.startColor, task.endColor),
-                ),
-              ),
-              Positioned.fill(
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      // child: Image.asset(
-                      //   'assets/icon.png',
-                      //   height: 64,
-                      //   width: 64,
-                      // ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Image.asset(
-                          'assets/ic_task.png',
-                          width: 40,
-                          height: 40,
-                          fit: BoxFit.contain,
+                    flex: 2,
+                  ),
+                  Expanded(
+                    flex: 4,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          task.title,
+                          style: AppConstant.smallTitleTextWhite,
                         ),
-                      ),
-                      flex: 2,
-                    ),
-                    Expanded(
-                      flex: 4,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            task.title,
-                            style: AppConstant.smallTitleTextWhite,
-                          ),
-                          Text(
-                            task.subTitle,
-                            style: AppConstant.smallSubTextWhite,
-                          ),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: <Widget>[
-                              const Icon(
-                                Icons.access_time_outlined,
-                                color: Colors.white,
-                                size: 16,
+                        Text(
+                          task.subTitle,
+                          style: AppConstant.smallSubTextWhite,
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: <Widget>[
+                            const Icon(
+                              Icons.access_time_outlined,
+                              color: Colors.white,
+                              size: 16,
+                            ),
+                            const SizedBox(
+                              width: 8,
+                            ),
+                            Flexible(
+                              child: Text(
+                                task.time,
+                                style: AppConstant.smallSubTextWhite,
                               ),
-                              const SizedBox(
-                                width: 8,
-                              ),
-                              Flexible(
-                                child: Text(
-                                  task.time,
-                                  style: AppConstant.smallSubTextWhite,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                    Expanded(
-                      flex: 2,
-                      child: Checkbox(
-                        activeColor: task.endColor,
-                        checkColor: Colors.white,
-                        value: task.completed,
-                        onChanged: (bool) {
-                          print('onChange checkbox: $bool');
-                          setState(() {
-                            task.completed = bool;
-                          });
-                        },
-                      ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Checkbox(
+                      activeColor: task.endColor,
+                      checkColor: Colors.white,
+                      value: task.completed,
+                      onChanged: (bool) {
+                        print('onChange checkbox: $bool');
+                        setState(() {
+                          task.completed = bool;
+                        });
+                      },
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -294,14 +341,29 @@ class _TodoListViewState extends State<TodoListView> {
   }
 
   void addNewTask(Task task) {
+    // setState(() {
+    if (task.title.isNotEmpty && task.subTitle.isNotEmpty) {
+      tasks.insert(0, task);
+    }
+    // });
+  }
+
+  void removeTask(Task task) {
     setState(() {
-      if (task.title.isNotEmpty && task.subTitle.isNotEmpty) {
-        listModel.insert(0, task);
-      }
+      tasks.remove(task);
     });
   }
 
-  void doAdd() {
+  void editTask(Task task, int index) {
+    // setState(() {
+    // if (index < tasks.length) {
+    //   tasks.insert(index, task);
+    //   tasks.removeAt(index);
+    // }
+    // });
+  }
+
+  void doAdd({Task task}) {
     print('Add new Task');
     showDialog(
         barrierDismissible: false,
@@ -309,9 +371,9 @@ class _TodoListViewState extends State<TodoListView> {
         builder: (BuildContext context) {
           return Dialog(
             child: AddTaskDialog(
-              saveClick: (task) {
-                addNewTask(task);
-              },
+              task: task,
+              saveClick: addNewTask,
+              editClick: editTask,
             ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(12)),

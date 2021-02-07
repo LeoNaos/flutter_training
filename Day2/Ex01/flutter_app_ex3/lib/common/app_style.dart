@@ -28,10 +28,20 @@ class AppColors {
 }
 
 class AppConstant {
+  // url
   static const String app_default_share_url = "";
 
+  // Spacing
+  static final hSpace8 = const SizedBox(height: 8);
+
+  // Padding
+  static final padTop5 = const EdgeInsets.only(top: 5);
+  static final padAll8 = const EdgeInsets.all(8);
+
+  // Border
   static const double borderRadius = 24;
 
+  // textSize
   static const lagerTextSize = 40.0;
   static const bigTextSize = 23.0;
   static const normalTextSize = 18.0;
@@ -39,6 +49,7 @@ class AppConstant {
   static const smallTextSize = 14.0;
   static const minTextSize = 12.0;
 
+  // style
   static const smallSubTextWhite = TextStyle(
     color: AppColors.textColorWhite,
     fontSize: smallTextSize,
