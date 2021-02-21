@@ -84,7 +84,7 @@ class MyHomePage extends StatelessWidget {
                                 topRight: Radius.circular(40),
                                 topLeft: Radius.circular(40)),
                           ),
-                          // padding: const EdgeInsets.only(top: 5),
+                          padding: const EdgeInsets.only(top: 5),
                         ),
                       ),
                     ],
@@ -123,6 +123,59 @@ class MyHomePage extends StatelessWidget {
   }
 }
 
+class TodoListView1 extends StatefulWidget {
+  final ScrollController scrollController;
+
+  TodoListView1({this.scrollController});
+
+  @override
+  _TodoListView1State createState() => _TodoListView1State();
+}
+
+class _TodoListView1State extends State<TodoListView1> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print('init State todoListview1');
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    print('didChangeDependencies todolistview1');
+  }
+
+  @override
+  void didUpdateWidget(covariant TodoListView1 oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+    print('didUpdateWidget todolistview1');
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    print('dispose todolistview1');
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print('build Context todoListview1');
+    return ListView.builder(
+        itemCount: 20,
+        controller: widget.scrollController,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text('title'),
+            subtitle: Text('subTitle'),
+          );
+        });
+  }
+}
+
 class TodoListView extends StatefulWidget {
   // Properties
   final ScrollController scrollController;
@@ -145,6 +198,13 @@ class _TodoListViewState extends State<TodoListView> {
     super.initState();
     listModel = ListModel(tasks);
     print('init State TodoListViewState');
+  }
+
+  @override
+  void didUpdateWidget(covariant TodoListView oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+    print('DidUpdate Widget');
   }
 
   @override
